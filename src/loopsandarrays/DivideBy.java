@@ -17,7 +17,9 @@ public class DivideBy {
                 double y = input.nextDouble();
 
                 double divisionResult = x / y;
-                System.out.println("Atsakymas: " + divisionResult);
+                System.out.println("Atsakymas: ");
+                System.out.printf("%.4f", divisionResult);
+                System.out.println();
                 if (y == 0) {
                     System.out.println("Ivedete 0, programa sustojo");
                     works = false;
