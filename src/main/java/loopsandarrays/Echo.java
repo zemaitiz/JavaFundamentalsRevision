@@ -7,10 +7,13 @@ public class Echo {
         boolean works = true;
         Scanner input = new Scanner(System.in);
 
+
         do {
             System.out.println("Enter your text here:");
             String message = input.nextLine();
-            System.out.println(message);
+            StringBuilder sb = new StringBuilder(message);
+            sb.reverse();
+            System.out.println(sb);
             System.out.println("Do you want to continue or quit?" + "\n" + "c/q");
             String answer = input.nextLine();
             if (answer.equalsIgnoreCase("q")) {
