@@ -1,8 +1,12 @@
 package objects.petrolstation;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
+import static java.math.RoundingMode.*;
 
 public class PetrolStationMain {
 
@@ -19,7 +23,7 @@ public class PetrolStationMain {
         List<FuelTank> fuelTankList = new ArrayList<>();
         Scanner input = new Scanner(System.in);
         boolean fuel = true;
-        double price = 0;
+        BigDecimal price = BigDecimal.ZERO;
 
         while (fuel) {
             System.out.println("Hello, which type of fuel would you like to buy?");
@@ -43,28 +47,44 @@ public class PetrolStationMain {
             }
             long totalFuelingTime = stop - start;
 
-            double volume = totalFuelingTime * 1000000000 * FLOW_RATE;
+            double volume = (double) totalFuelingTime / 1000000000 * FLOW_RATE;
 
             if (fuelType.equalsIgnoreCase("diesel")) {
-                price = volume * PRICE_DIESEL;
+                price = BigDecimal.valueOf(volume * PRICE_DIESEL);
             } else if (fuelType.equalsIgnoreCase("95")) {
-                price = volume * PRICE_95;
+                price = BigDecimal.valueOf(volume * PRICE_95);
             } else if (fuelType.equalsIgnoreCase("98")) {
-                price = volume * PRICE_98;
+                price = BigDecimal.valueOf(volume * PRICE_98);
             }
-            FuelTank fuelTank = new FuelTank(fuelType, volume);
+            FuelTank fuelTank = new FuelTank(fuelType, volume, price);
             fuelTankList.add(fuelTank);
 
             System.out.println("Do you want to fill another tank? + \n + Y/N");
             String answer = input.nextLine();
             if (answer.equalsIgnoreCase("n")) {
                 fuel = false;
-                System.out.println("You have filled " + fuelTankList.size() + " tanks: \n ");
+//cia apskaiciuojam visu baku kaina
+                BigDecimal totalPrice = BigDecimal.ZERO;
+                System.out.println("You have filled " + fuelTankList.size() + " tank(s): \n ");
                 for (FuelTank t : fuelTankList) {
-                    System.out.println(t.getType().toUpperCase() + " " + t.getVolume() + "L" + " , " + price + "EUR");
+                    totalPrice = totalPrice.add(t.getPrice());
+                    System.out.println(t.getType().toUpperCase() + " " + t.getVolume() + " L" + ", " + t.getPrice().setScale(2, HALF_UP) + " EUR");
+                }
+                System.out.println("Total price is " + totalPrice.setScale(2, HALF_UP) + " Eur");
+                System.out.print("***Enter the amount of money you pay***");
+                System.out.println();
+                BigDecimal amountOfMoney = input.nextBigDecimal();
+                if (amountOfMoney.equals(totalPrice)) {
+                    System.out.println("Thank you and have a nice day!");
+                } else if (amountOfMoney.compareTo(totalPrice) < 0) {
+                    System.out.println("Sorry but the amount you gave is too little, look for more or we will have to call 112 ");
+                } else if (amountOfMoney.compareTo(totalPrice) > 0) {
+                    System.out.println("Thank you! Here is your change and have a nice day!");
                 }
             }
 
         }
+
     }
 }
+
